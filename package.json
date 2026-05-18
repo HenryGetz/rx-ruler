@@ -1,0 +1,43 @@
+{
+  "name": "rx-ruler",
+  "version": "0.1.0",
+  "description": "Validate Reactive Resume v5 JSON against the upstream schema",
+  "type": "module",
+  "license": "MIT",
+  "engines": {
+    "node": ">=20"
+  },
+  "main": "./dist/index.js",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "bin": {
+    "rx-ruler": "./dist/cli.js"
+  },
+  "files": [
+    "dist",
+    "src/schema/v5",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "npm run build"
+  },
+  "dependencies": {
+    "zod": "4.4.3",
+    "commander": "^13.1.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.3",
+    "tsup": "^8.4.0",
+    "vitest": "^3.1.1",
+    "tsx": "^4.19.4",
+    "@types/node": "^22.15.12"
+  }
+}

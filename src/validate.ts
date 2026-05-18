@@ -19,17 +19,38 @@ function dotPath(path: PropertyKey[]): string {
 }
 
 function mapIssue(issue: ZodIssue): ValidationError {
-  const error: ValidationError = {
-    path: dotPath(issue.path),
-    message: issue.message,
-    code: issue.code,
-  };
-  if ("expected" in issue && issue.expected !== undefined) {
-    error.expected = String(issue.expected);
-  }
+  const path = dotPath(issue.path);
+  const code = issue.code;
+
+  const rawExpected =
+    "expected" in issue && issue.expected !== undefined
+      ? String(issue.expected)
+      : undefined;
+
+  const receivedMatch = issue.message.match(/received (.+)$/);
+  let received: string | undefined;
   if ("received" in issue && issue.received !== undefined) {
-    error.received = String(issue.received);
+    received = String(issue.received);
+  } else if (receivedMatch) {
+    received = receivedMatch[1];
   }
+
+  let message: string;
+  if (code === "invalid_type" && rawExpected) {
+    if (!received || received === "undefined") {
+      message = `expected ${rawExpected}, but field is missing`;
+      received = undefined;
+    } else {
+      message = `expected ${rawExpected}, received ${received}`;
+    }
+  } else {
+    message = issue.message;
+  }
+
+  const error: ValidationError = { path, message, code };
+  if (rawExpected) error.expected = rawExpected;
+  if (received) error.received = received;
+
   return error;
 }
 
